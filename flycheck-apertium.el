@@ -66,10 +66,10 @@ See URL `https://github.com/ggm/vm-for-transfer-cpp'."
   :error-filter
   (lambda (errors)
     (dolist (err errors)
-      (let* ((line (string-to-number
-                    (replace-regexp-in-string "[^0-9]+"
-                                              ""
-                                              (flycheck-error-id err)))))
+      (let ((line (string-to-number
+                   (replace-regexp-in-string "[^0-9]+"
+                                             ""
+                                             (flycheck-error-id err)))))
         (setf (flycheck-error-line err) line)))
     errors)
   ;; TODO: line number is at the end of the rule element, not very accurate!
@@ -94,6 +94,15 @@ See URL `https://github.com/ggm/vm-for-transfer-cpp'."
   :predicate (lambda ()
                (and (buffer-file-name)
                     (string-match "\\.dix$" buffer-file-name)))
+  :error-filter
+  (lambda (errors)
+    (dolist (err errors)
+      ;; Remove some redundant info from the message:
+      (let ((msg (replace-regexp-in-string "element \\([^:]*\\): Schemas validity error : Element '\\1'"
+                                           "Element \\1"
+                                           (flycheck-error-message err))))
+        (setf (flycheck-error-message err) msg)))
+    errors)
   :modes (xml-mode nxml-mode))
 
 (add-to-list 'flycheck-checkers 'apertium-dix)
