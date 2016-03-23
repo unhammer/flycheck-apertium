@@ -18,20 +18,15 @@
       <xs:selector xpath=".//sdef" />
       <xs:field xpath="@n" />
     </xs:key>
-    <!--
-	Commented out since it reports an error on entries having the
-	ignore attribute (@i) set to 'yes'.
-	Though, we should perhaps consider to differentiate ignoring a dictionary
-	in compilation vs. dictionary consistency.
-    -->
-	<xs:keyref name="parNameRef" refer="paradigm_name">
-	  <xs:selector xpath=".//par" />
-	  <xs:field xpath="@n" />
-	</xs:keyref>
-	<xs:key name="paradigm_name">
-	  <xs:selector xpath=".//pardef" />
-	  <xs:field xpath="@n" />
-	</xs:key>
+    <!-- TODO: Should ignore when ignore attribute (@i) set to 'yes': -->
+    <xs:keyref name="parNameRef" refer="paradigm_name">
+      <xs:selector xpath=".//par" />
+      <xs:field xpath="@n" />
+    </xs:keyref>
+    <xs:key name="paradigm_name">
+      <xs:selector xpath=".//pardef" />
+      <xs:field xpath="@n" />
+    </xs:key>
   </xs:element>
   <!--  root element -->
   <xs:element name="alphabet" type="xs:string"/>
@@ -193,6 +188,11 @@
         <xs:element ref="s"/>
       </xs:choice>
     </xs:complexType>
+    <!-- TODO: This is a warning, not an error: -->
+    <xs:unique name="l-s-unique">
+      <xs:selector xpath="s"/>
+      <xs:field xpath="@n" />
+    </xs:unique>
   </xs:element>
   <!-- left part of p -->
   <xs:element name="r">
@@ -205,6 +205,11 @@
         <xs:element ref="s"/>
       </xs:choice>
     </xs:complexType>
+    <!-- TODO: This is a warning, not an error: -->
+    <xs:unique name="r-s-unique">
+      <xs:selector xpath="s"/>
+      <xs:field xpath="@n" />
+    </xs:unique>
   </xs:element>
   <!-- right part of p -->
   <xs:element name="a">
