@@ -129,7 +129,7 @@ correct schema."
   (when (flycheck-may-use-checker 'apertium-dix)
     (flycheck-disable-checker 'xml-xmllint)))
 
-(add-hook 'nxml-mode-hook #'flycheck-apertium-dix-overrides-xmllint)
+(add-hook 'flycheck-mode-hook #'flycheck-apertium-dix-overrides-xmllint)
 
 (provide 'flycheck-apertium)
 ;;; flycheck-apertium.el ends here
