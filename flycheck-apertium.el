@@ -56,7 +56,16 @@
 See URL `https://github.com/ggm/vm-for-transfer-cpp'."
   :command ("apertium-compile-transfer" "-i" source "-o" null-device)
   :error-patterns
-  ((error line-start "Error: line "
+  ((error line-start
+          (file-name)
+          ":"
+          line
+          ": "
+          (id (one-or-more (not (any ":"))))
+          ": "
+          (message (one-or-more not-newline))
+          line-end)
+   (error line-start "Error: line "
           ;; TODO: line number has hard spaces unless LC_ALL=C;
           ;; abusing id to turn it into line in error-filter:
           (id (one-or-more (not (any ","))))
@@ -70,7 +79,8 @@ See URL `https://github.com/ggm/vm-for-transfer-cpp'."
                    (replace-regexp-in-string "[^0-9]+"
                                              ""
                                              (flycheck-error-id err)))))
-        (setf (flycheck-error-line err) line)))
+        (when (> line 0)
+          (setf (flycheck-error-line err) line))))
     errors)
   ;; TODO: line number is at the end of the rule element, not very accurate!
   :predicate flycheck-apertium-file-transferp
