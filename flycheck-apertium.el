@@ -7,6 +7,7 @@
 ;; URL: http://wiki.apertium.org/wiki/Emacs
 ;; Version: 0.1
 ;; Keywords: convenience, tools, xml
+;; Package-Requires: ((flycheck "0.25"))
 
 ;;; Commentary:
 
