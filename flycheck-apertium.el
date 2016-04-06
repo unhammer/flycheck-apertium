@@ -5,7 +5,7 @@
 ;; Author: Kevin Brubeck Unhammer <unhammer+apertium@mm.st>
 ;; Created: 23 March 2016
 ;; URL: http://wiki.apertium.org/wiki/Emacs
-;; Version: 0.1
+;; Version: 0.2
 ;; Keywords: convenience, tools, xml
 ;; Package-Requires: ((flycheck "0.25"))
 
