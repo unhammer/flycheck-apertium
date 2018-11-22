@@ -1,11 +1,11 @@
 ;;; flycheck-apertium.el --- Apertium checkers in flycheck
 
-;; Copyright (C) 2016 Kevin Brubeck Unhammer <unhammer+apertium@mm.st>
+;; Copyright (C) 2016–2018 Kevin Brubeck Unhammer <unhammer+apertium@mm.st>
 ;;
 ;; Author: Kevin Brubeck Unhammer <unhammer+apertium@mm.st>
 ;; Created: 23 March 2016
 ;; URL: http://wiki.apertium.org/wiki/Emacs
-;; Version: 0.2
+;; Version: 0.3.0
 ;; Keywords: convenience, tools, xml
 ;; Package-Requires: ((flycheck "0.25"))
 
@@ -93,6 +93,52 @@ See URL `https://github.com/ggm/vm-for-transfer-cpp'."
   :modes (xml-mode nxml-mode))
 
 (add-to-list 'flycheck-checkers 'apertium-transfervm)
+
+(defun flycheck-apertium-root-tag ()
+  "Get the root tag of the document."
+  ;; TODO: There's got to be something built-in in rng/nxml?
+  (save-excursion
+    (save-restriction
+      (goto-char (point-min))
+      (let ((prev (point))
+            cur)
+        (setq cur (goto-char (nxml-token-after)))
+        (while (and (not (eq xmltok-type 'start-tag))
+                    (> cur prev))
+          (setq cur (goto-char (nxml-token-after))))
+        (when (eq xmltok-type 'start-tag)
+          (xmltok-start-tag-qname))))))
+
+(defun flycheck-apertium--root-is (root-tag)
+  "Non-nil iff the XML root tag is ROOT-TAG."
+  (equal (flycheck-apertium-root-tag) root-tag))
+
+(flycheck-define-checker apertium-postchunk
+  "Check using apertium-validate-postchunk."
+  :command ("apertium-validate-postchunk" source)
+  :error-patterns ((error line-start (file-name) ":" line ": " (message) line-end))
+  :predicate (lambda () (flycheck-apertium--root-is "postchunk"))
+  :modes nxml-mode)
+
+(add-to-list 'flycheck-checkers 'apertium-postchunk)
+
+(flycheck-define-checker apertium-transfer
+  "Check using apertium-validate-transfer."
+  :command ("apertium-validate-transfer" source)
+  :error-patterns ((error line-start (file-name) ":" line ": " (message) line-end))
+  :predicate (lambda () (flycheck-apertium--root-is "transfer"))
+  :modes nxml-mode)
+
+(add-to-list 'flycheck-checkers 'apertium-transfer)
+
+(flycheck-define-checker apertium-interchunk
+  "Check using apertium-validate-interchunk."
+  :command ("apertium-validate-interchunk" source)
+  :error-patterns ((error line-start (file-name) ":" line ": " (message) line-end))
+  :predicate (lambda () (flycheck-apertium--root-is "interchunk"))
+  :modes nxml-mode)
+
+(add-to-list 'flycheck-checkers 'apertium-interchunk)
 
 (defun flycheck-apertium-dix-xsd ()
   "Find the dix.xsd from within this flycheck-apertium package."
