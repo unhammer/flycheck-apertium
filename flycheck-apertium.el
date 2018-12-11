@@ -5,7 +5,7 @@
 ;; Author: Kevin Brubeck Unhammer <unhammer+apertium@mm.st>
 ;; Created: 23 March 2016
 ;; URL: http://wiki.apertium.org/wiki/Emacs
-;; Version: 0.3.0
+;; Version: 0.3.1
 ;; Keywords: convenience, tools, xml
 ;; Package-Requires: ((flycheck "0.25"))
 
@@ -113,15 +113,6 @@ See URL `https://github.com/ggm/vm-for-transfer-cpp'."
   "Non-nil iff the XML root tag is ROOT-TAG."
   (equal (flycheck-apertium-root-tag) root-tag))
 
-(flycheck-define-checker apertium-postchunk
-  "Check using apertium-validate-postchunk."
-  :command ("apertium-validate-postchunk" source)
-  :error-patterns ((error line-start (file-name) ":" line ": " (message) line-end))
-  :predicate (lambda () (flycheck-apertium--root-is "postchunk"))
-  :modes nxml-mode)
-
-(add-to-list 'flycheck-checkers 'apertium-postchunk)
-
 (flycheck-define-checker apertium-transfer
   "Check using apertium-validate-transfer."
   :command ("apertium-validate-transfer" source)
@@ -139,6 +130,24 @@ See URL `https://github.com/ggm/vm-for-transfer-cpp'."
   :modes nxml-mode)
 
 (add-to-list 'flycheck-checkers 'apertium-interchunk)
+
+(flycheck-define-checker apertium-postchunk
+  "Check using apertium-validate-postchunk."
+  :command ("apertium-validate-postchunk" source)
+  :error-patterns ((error line-start (file-name) ":" line ": " (message) line-end))
+  :predicate (lambda () (flycheck-apertium--root-is "postchunk"))
+  :modes nxml-mode)
+
+(add-to-list 'flycheck-checkers 'apertium-postchunk)
+
+(flycheck-define-checker apertium-lrx
+  "Check using lrx-comp."
+  :command ("lrx-comp" source "/dev/null")
+  :error-patterns ((error line-start "Error (" line "): " (message) line-end))
+  :predicate (lambda () (flycheck-apertium--root-is "rules"))
+  :modes nxml-mode)
+
+(add-to-list 'flycheck-checkers 'apertium-lrx)
 
 (defun flycheck-apertium-dix-xsd ()
   "Find the dix.xsd from within this flycheck-apertium package."
